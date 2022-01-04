@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path'); //runs path module
 const mongoose = require('mongoose');
 const methodOverride = require('method-override'); //allows for overriding PUT, PATCH, etc.
+const morgan = require('morgan'); //http request logs in terminal
 const Campground = require('./models/campground'); //imports the Campground database
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
