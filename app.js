@@ -2,6 +2,7 @@
 const express = require('express');
 const path = require('path'); //runs path module
 const mongoose = require('mongoose');
+const ejsMate = require('ejs-mate');
 const methodOverride = require('method-override'); //allows for overriding PUT, PATCH, etc.
 const Campground = require('./models/campground'); //imports the Campground database
 
@@ -19,6 +20,9 @@ db.once("open", () => {
 })
 
 const app = express();
+
+//uses the ejs-mate engine for layout design
+app.engine('ejs', ejsMate);
 
 //use ejs and set views directory. Lets you run app from within other directories
 app.set('view engine', 'ejs');
