@@ -29,7 +29,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 //parse the request body
-app.use(express.urlencoded({ extended: true}))
+app.use(express.urlencoded({ extended: true }))
 //use method override
 app.use(methodOverride('_method'));
 
@@ -58,10 +58,16 @@ app.get('/campgrounds/new', (req, res) => {
 })
 
 //save new campground
-app.post('/campgrounds', async(req, res) => {
-    const campground = new Campground(req.body.campground);
-    await campground.save();
-    res.redirect(`/campgrounds/${campground._id}`)
+//uses try/catch and adds next parameter to send to basic error handler
+app.post('/campgrounds', async (req, res, next) => {
+    try {
+        const campground = new Campground(req.body.campground);
+        await campground.save();
+        res.redirect(`/campgrounds/${campground._id}`)
+    } catch (e) {
+        next(e);
+    }
+
 })
 
 //show page for a campground
@@ -77,16 +83,21 @@ app.get('/campgrounds/:id/edit', async (req, res) => {
 })
 
 //submit the edits
-app.put('/campgrounds/:id', async (req,res) => {
+app.put('/campgrounds/:id', async (req, res) => {
     const { id } = req.params; //deconstruct
     const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground }); //spread operator
     res.redirect(`/campgrounds/${campground._id}`)
 })
 
-app.delete('/campgrounds/:id', async (req,res) => {
+app.delete('/campgrounds/:id', async (req, res) => {
     const { id } = req.params;
     await Campground.findByIdAndDelete(id);
     res.redirect('/campgrounds');
+})
+
+//Basic error handling
+app.use((err, req, res, next) => {
+    res.send("Something is wrong!")
 })
 
 //listening on port
