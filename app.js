@@ -3,6 +3,8 @@ const express = require('express');
 const path = require('path'); //runs path module
 const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
+const Joi = require('joi');
+const { campgroundSchema } = require('./schemas.js');
 const catchAsync = require('./utils/catchAsync'); //uses catchAsync utility to wrap asyn errors and forward to next
 const expressError = require('./utils/ExpressError') // uses utitlity class for express errors
 const methodOverride = require('method-override'); //allows for overriding PUT, PATCH, etc.
@@ -36,6 +38,19 @@ app.use(express.urlencoded({ extended: true }))
 //use method override
 app.use(methodOverride('_method'));
 
+
+const validateCampground = (req, res, next) => {
+    const { error } = campgroundSchema.validate(req.body); //calls schemas.js
+    if (error) {
+        const msg = error.details.map(el => el.message).join(','); //maps over array of error details
+        throw new ExpressError(msg, 400); //utilize standard error method below
+    } else {
+        next();
+    }
+    //console.log(result);
+}
+
+
 //route (use render method of express. it knows the file extention because of the app.set above, and it looks in the views folder by default)
 app.get('/', (req, res) => {
     //res.send('HELLO FROM YELP CAMP') //test that it's working
@@ -62,11 +77,14 @@ app.get('/campgrounds/new', (req, res) => {
 
 //save new campground
 //uses async wrapper class in utils/catchAsync
-app.post('/campgrounds', catchAsync(async (req, res, next) => {
-    if(!req.body.campground) throw new ExpressError('Invalid Campground Data', 400); //throws error if incomplete or incorrect type of data sent
-        const campground = new Campground(req.body.campground);
-        await campground.save();
-        res.redirect(`/campgrounds/${campground._id}`)
+app.post('/campgrounds', validateCampground, catchAsync(async (req, res, next) => {
+    //throws error if incomplete or incorrect type of data sent
+    //if(!req.body.campground) throw new ExpressError('Invalid Campground Data', 400); 
+
+
+    const campground = new Campground(req.body.campground);
+    await campground.save();
+    res.redirect(`/campgrounds/${campground._id}`)
 }))
 
 // //uses try/catch and adds next parameter to send to basic error handler
@@ -94,7 +112,7 @@ app.get('/campgrounds/:id/edit', catchAsync(async (req, res) => {
 }))
 
 //submit the edits
-app.put('/campgrounds/:id', catchAsync(async (req, res) => {
+app.put('/campgrounds/:id', validateCampground, catchAsync(async (req, res) => {
     const { id } = req.params; //deconstruct
     const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground }); //spread operator
     res.redirect(`/campgrounds/${campground._id}`)
@@ -113,9 +131,11 @@ app.all('*', (req, res, next) => { //* means all paths
 
 //Basic error handling
 app.use((err, req, res, next) => {
-    const { statusCode = 500, message = "Something went wrong" } = err;
-    res.status(statusCode).send(message);
-    res.send("Something is wrong!")
+    //const { statusCode = 500, message = "Something went wrong" } = err;
+    const { statusCode = 500 } = err;
+    if (!err.message) err.message = "Oh No, Something Went Wrong!";
+    res.status(statusCode).render('error', { err }); //use error.js in /views, pass entire error
+    //res.send("Something is wrong!")
 })
 
 //listening on port
