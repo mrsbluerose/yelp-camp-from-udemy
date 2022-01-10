@@ -4,8 +4,10 @@ const path = require('path'); //runs path module
 const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
 const catchAsync = require('./utils/catchAsync'); //uses catchAsync utility to wrap asyn errors and forward to next
+const expressError = require('./utils/ExpressError') // uses utitlity class for express errors
 const methodOverride = require('method-override'); //allows for overriding PUT, PATCH, etc.
 const Campground = require('./models/campground'); //imports the Campground database
+const ExpressError = require('./utils/ExpressError');
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
     //useNewUrlParser: true,  //depricated since course video
@@ -61,6 +63,7 @@ app.get('/campgrounds/new', (req, res) => {
 //save new campground
 //uses async wrapper class in utils/catchAsync
 app.post('/campgrounds', catchAsync(async (req, res, next) => {
+    if(!req.body.campground) throw new ExpressError('Invalid Campground Data', 400); //throws error if incomplete or incorrect type of data sent
         const campground = new Campground(req.body.campground);
         await campground.save();
         res.redirect(`/campgrounds/${campground._id}`)
@@ -103,8 +106,15 @@ app.delete('/campgrounds/:id', catchAsync(async (req, res) => {
     res.redirect('/campgrounds');
 }))
 
+//404 error for paths that don't exist
+app.all('*', (req, res, next) => { //* means all paths
+    next(new ExpressError('PAGE NOT FOUND', 404));
+})
+
 //Basic error handling
 app.use((err, req, res, next) => {
+    const { statusCode = 500, message = "Something went wrong" } = err;
+    res.status(statusCode).send(message);
     res.send("Something is wrong!")
 })
 
