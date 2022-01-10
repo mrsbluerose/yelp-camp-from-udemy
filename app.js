@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path'); //runs path module
 const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
+const catchAsync = require('./utils/catchAsync'); //uses catchAsync utility to wrap asyn errors and forward to next
 const methodOverride = require('method-override'); //allows for overriding PUT, PATCH, etc.
 const Campground = require('./models/campground'); //imports the Campground database
 
@@ -47,10 +48,10 @@ app.get('/', (req, res) => {
 // })
 
 //list of all campgrounds
-app.get('/campgrounds', async (req, res) => {
+app.get('/campgrounds', catchAsync(async (req, res) => {
     const campgrounds = await Campground.find({})
     res.render('campgrounds/index', { campgrounds });
-})
+}))
 
 //create new campground
 app.get('/campgrounds/new', (req, res) => {
@@ -58,42 +59,49 @@ app.get('/campgrounds/new', (req, res) => {
 })
 
 //save new campground
-//uses try/catch and adds next parameter to send to basic error handler
-app.post('/campgrounds', async (req, res, next) => {
-    try {
+//uses async wrapper class in utils/catchAsync
+app.post('/campgrounds', catchAsync(async (req, res, next) => {
         const campground = new Campground(req.body.campground);
         await campground.save();
         res.redirect(`/campgrounds/${campground._id}`)
-    } catch (e) {
-        next(e);
-    }
+}))
 
-})
+// //uses try/catch and adds next parameter to send to basic error handler
+// app.post('/campgrounds', async (req, res, next) => {
+//     try {
+//         const campground = new Campground(req.body.campground);
+//         await campground.save();
+//         res.redirect(`/campgrounds/${campground._id}`)
+//     } catch (e) {
+//         next(e);
+//     }
+
+// })
 
 //show page for a campground
-app.get('/campgrounds/:id', async (req, res) => {
+app.get('/campgrounds/:id', catchAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id);
     res.render('campgrounds/show', { campground });
-})
+}))
 
 //edit a campground
-app.get('/campgrounds/:id/edit', async (req, res) => {
+app.get('/campgrounds/:id/edit', catchAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id);
     res.render('campgrounds/edit', { campground });
-})
+}))
 
 //submit the edits
-app.put('/campgrounds/:id', async (req, res) => {
+app.put('/campgrounds/:id', catchAsync(async (req, res) => {
     const { id } = req.params; //deconstruct
     const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground }); //spread operator
     res.redirect(`/campgrounds/${campground._id}`)
-})
+}))
 
-app.delete('/campgrounds/:id', async (req, res) => {
+app.delete('/campgrounds/:id', catchAsync(async (req, res) => {
     const { id } = req.params;
     await Campground.findByIdAndDelete(id);
     res.redirect('/campgrounds');
-})
+}))
 
 //Basic error handling
 app.use((err, req, res, next) => {
