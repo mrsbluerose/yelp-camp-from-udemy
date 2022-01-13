@@ -6,7 +6,11 @@ const CampgroundSchema = new Schema({
     image: String,
     price: Number,
     description: String,
-    location: String
+    location: String,
+    reviews: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Review' //review model
+    }]
 })
 
 //compiles the model, looking for a pluralized, lowercased version of the first parameter in the database and exports it to use.
