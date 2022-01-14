@@ -5,11 +5,12 @@ const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
 const Joi = require('joi');
 const { campgroundSchema } = require('./schemas.js');
+const { reviewSchema } = require('./schemas.js');
 const catchAsync = require('./utils/catchAsync'); //uses catchAsync utility to wrap asyn errors and forward to next
-const expressError = require('./utils/ExpressError') // uses utitlity class for express errors
 const methodOverride = require('method-override'); //allows for overriding PUT, PATCH, etc.
 const Campground = require('./models/campground'); //imports the Campground database
-const ExpressError = require('./utils/ExpressError');
+const Review = require('./models/review');
+const ExpressError = require('./utils/ExpressError');// uses utitlity class for express errors
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
     //useNewUrlParser: true,  //depricated since course video
@@ -41,6 +42,17 @@ app.use(methodOverride('_method'));
 
 const validateCampground = (req, res, next) => {
     const { error } = campgroundSchema.validate(req.body); //calls schemas.js
+    if (error) {
+        const msg = error.details.map(el => el.message).join(','); //maps over array of error details
+        throw new ExpressError(msg, 400); //utilize standard error method below
+    } else {
+        next();
+    }
+    //console.log(result);
+}
+
+const validateReview = (req, res, next) => {
+    const { error } = reviewSchema.validate(req.body); //calls schemas.js
     if (error) {
         const msg = error.details.map(el => el.message).join(','); //maps over array of error details
         throw new ExpressError(msg, 400); //utilize standard error method below
@@ -101,7 +113,7 @@ app.post('/campgrounds', validateCampground, catchAsync(async (req, res, next) =
 
 //show page for a campground
 app.get('/campgrounds/:id', catchAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id);
+    const campground = await Campground.findById(req.params.id).populate('reviews'); //populating reviews;
     res.render('campgrounds/show', { campground });
 }))
 
@@ -124,9 +136,19 @@ app.delete('/campgrounds/:id', catchAsync(async (req, res) => {
     res.redirect('/campgrounds');
 }))
 
+//
+app.post('/campgrounds/:id/reviews', validateReview, catchAsync(async(req,res) => {
+    const campground = await Campground.findById(req.params.id);
+    const review = new Review(req.body.review);
+    campground.reviews.push(review);
+    await review.save();
+    await campground.save();
+    res.redirect(`/campgrounds/${campground._id}`);
+}))
+
 //404 error for paths that don't exist
 app.all('*', (req, res, next) => { //* means all paths
-    next(new ExpressError('PAGE NOT FOUND', 404));
+    next(new ExpressError('General Error Occurred', 404));
 })
 
 //Basic error handling
