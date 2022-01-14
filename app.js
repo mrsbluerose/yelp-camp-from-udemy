@@ -69,6 +69,7 @@ app.get('/', (req, res) => {
     res.render('home');
 })
 
+//CAMPGROUND ROUTES
 //testing adding a document
 // app.get('/makecampground', async (req, res) => {
 //     const camp = new Campground({title: 'my backyard', description: 'cheap camping!'});
@@ -76,7 +77,7 @@ app.get('/', (req, res) => {
 //     res.send(camp);
 // })
 
-//list of all campgrounds
+//show of all campgrounds
 app.get('/campgrounds', catchAsync(async (req, res) => {
     const campgrounds = await Campground.find({})
     res.render('campgrounds/index', { campgrounds });
@@ -130,13 +131,14 @@ app.put('/campgrounds/:id', validateCampground, catchAsync(async (req, res) => {
     res.redirect(`/campgrounds/${campground._id}`)
 }))
 
+//delete campground
 app.delete('/campgrounds/:id', catchAsync(async (req, res) => {
     const { id } = req.params;
     await Campground.findByIdAndDelete(id);
     res.redirect('/campgrounds');
 }))
 
-//
+//REVIEW ROUTES
 app.post('/campgrounds/:id/reviews', validateReview, catchAsync(async(req,res) => {
     const campground = await Campground.findById(req.params.id);
     const review = new Review(req.body.review);
@@ -146,6 +148,14 @@ app.post('/campgrounds/:id/reviews', validateReview, catchAsync(async(req,res) =
     res.redirect(`/campgrounds/${campground._id}`);
 }))
 
+app.delete('/campgrounds/:id/reviews/:reviewId', catchAsync(async (req, res) => {
+    const { id, reviewId } = req.params;
+    await Campground.findByIdAndUpdate(id, {$pull: {reviews: reviewId}})//modgo $pull operator
+    await Review.findByIdAndDelete(reviewId);
+    res.redirect(`/campgrounds/${id}`);
+}))
+
+//ERRORS
 //404 error for paths that don't exist
 app.all('*', (req, res, next) => { //* means all paths
     next(new ExpressError('General Error Occurred', 404));
