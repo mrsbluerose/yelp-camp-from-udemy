@@ -17,7 +17,7 @@ const CampgroundSchema = new Schema({
 //mongo middleware. Instructor's recommendation
 CampgroundSchema.post('findOneAndDelete', async function (doc) {
     if(doc){
-        await Review.remove({
+        await Review.deleteOne({
             _id: {
                 $in: doc.reviews
             }

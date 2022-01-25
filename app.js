@@ -4,13 +4,15 @@ const path = require('path'); //runs path module
 const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
 const Joi = require('joi');
-const { campgroundSchema } = require('./schemas.js');
+//const { campgroundSchema } = require('./schemas.js');
 const { reviewSchema } = require('./schemas.js');
 const catchAsync = require('./utils/catchAsync'); //uses catchAsync utility to wrap asyn errors and forward to next
 const methodOverride = require('method-override'); //allows for overriding PUT, PATCH, etc.
-const Campground = require('./models/campground'); //imports the Campground database
+//const Campground = require('./models/campground'); //imports the Campground database
 const Review = require('./models/review');
-const ExpressError = require('./utils/ExpressError');// uses utitlity class for express errors
+//const ExpressError = require('./utils/ExpressError');// uses utitlity class for express errors
+
+const campgrounds = require('./routes/campgrounds'); //uses the routes defined in routes/campgrounds.js
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
     //useNewUrlParser: true,  //depricated since course video
@@ -40,16 +42,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'));
 
 
-const validateCampground = (req, res, next) => {
-    const { error } = campgroundSchema.validate(req.body); //calls schemas.js
-    if (error) {
-        const msg = error.details.map(el => el.message).join(','); //maps over array of error details
-        throw new ExpressError(msg, 400); //utilize standard error method below
-    } else {
-        next();
-    }
-    //console.log(result);
-}
+
 
 const validateReview = (req, res, next) => {
     const { error } = reviewSchema.validate(req.body); //calls schemas.js
@@ -62,6 +55,7 @@ const validateReview = (req, res, next) => {
     //console.log(result);
 }
 
+app.use('/campgrounds', campgrounds) //prefix for routes and the route defined above
 
 //route (use render method of express. it knows the file extention because of the app.set above, and it looks in the views folder by default)
 app.get('/', (req, res) => {
@@ -77,66 +71,7 @@ app.get('/', (req, res) => {
 //     res.send(camp);
 // })
 
-//show of all campgrounds
-app.get('/campgrounds', catchAsync(async (req, res) => {
-    const campgrounds = await Campground.find({})
-    res.render('campgrounds/index', { campgrounds });
-}))
 
-//create new campground
-app.get('/campgrounds/new', (req, res) => {
-    res.render('campgrounds/new');
-})
-
-//save new campground
-//uses async wrapper class in utils/catchAsync
-app.post('/campgrounds', validateCampground, catchAsync(async (req, res, next) => {
-    //throws error if incomplete or incorrect type of data sent
-    //if(!req.body.campground) throw new ExpressError('Invalid Campground Data', 400); 
-
-
-    const campground = new Campground(req.body.campground);
-    await campground.save();
-    res.redirect(`/campgrounds/${campground._id}`)
-}))
-
-// //uses try/catch and adds next parameter to send to basic error handler
-// app.post('/campgrounds', async (req, res, next) => {
-//     try {
-//         const campground = new Campground(req.body.campground);
-//         await campground.save();
-//         res.redirect(`/campgrounds/${campground._id}`)
-//     } catch (e) {
-//         next(e);
-//     }
-
-// })
-
-//show page for a campground
-app.get('/campgrounds/:id', catchAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id).populate('reviews'); //populating reviews;
-    res.render('campgrounds/show', { campground });
-}))
-
-//edit a campground
-app.get('/campgrounds/:id/edit', catchAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id);
-    res.render('campgrounds/edit', { campground });
-}))
-
-//submit the edits
-app.put('/campgrounds/:id', validateCampground, catchAsync(async (req, res) => {
-    const { id } = req.params; //deconstruct
-    const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground }); //spread operator
-    res.redirect(`/campgrounds/${campground._id}`)
-}))
-
-//delete campground
-app.delete('/campgrounds/:id', catchAsync(async (req, res) => {
-    const { id } = req.params;
-    await Campground.findByIdAndDelete(id);
-    res.redirect('/campgrounds');
-}))
 
 //REVIEW ROUTES
 app.post('/campgrounds/:id/reviews', validateReview, catchAsync(async(req,res) => {
