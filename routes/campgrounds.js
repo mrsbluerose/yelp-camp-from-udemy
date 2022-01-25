@@ -16,6 +16,14 @@ const validateCampground = (req, res, next) => {
     //console.log(result);
 }
 
+//CAMPGROUND ROUTES
+//testing adding a document
+// app.get('/makecampground', async (req, res) => {
+//     const camp = new Campground({title: 'my backyard', description: 'cheap camping!'});
+//     await camp.save();
+//     res.send(camp);
+// })
+
 //show of all campgrounds
 router.get('/', catchAsync(async (req, res) => {
     const campgrounds = await Campground.find({})
