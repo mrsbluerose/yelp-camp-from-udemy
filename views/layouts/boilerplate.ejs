@@ -12,10 +12,10 @@
 </head>
 
 <body class="d-flex flex-column vh-100"><!--vh:verticle height of page-->
-  <%- include('../partials/navbar') %><!--links to partials folder and the nav bar file-->
+  <%- include('../partials/navbar') %> <!--links to partials folder and the nav bar file-->
 
-    <main class="container mt-5"></main><!--mt is margin top-->
-    <%= success %> <!-- displays the res.locals.success message from flash -->
+    <main class="container mt-5"> <!--mt is margin top-->
+      <%- include('../partials/flash') %> <!-- displays the res.locals.success message from flash -->
       <%- body %>
       
     </main>

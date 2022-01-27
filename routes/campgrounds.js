@@ -46,27 +46,28 @@ router.post('/', validateCampground, catchAsync(async (req, res, next) => {
     res.redirect(`/campgrounds/${campground._id}`)
 }))
 
-// //uses try/catch and adds next parameter to send to basic error handler
-// router.post('/campgrounds', async (req, res, next) => {
-//     try {
-//         const campground = new Campground(req.body.campground);
-//         await campground.save();
-//         res.redirect(`/campgrounds/${campground._id}`)
-//     } catch (e) {
-//         next(e);
-//     }
-
-// })
-
 //show page for a campground
 router.get('/:id', catchAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id).populate('reviews'); //populating reviews;
+    const id = req.params.id;
+    if (id.length > 24 || id.length < 24){ //My addition: makes sure ID is exactly 24 characters
+        req.flash('error', 'Campground does not exist.');
+        return res.redirect('/campgrounds');
+    }
+    const campground = await Campground.findById(id).populate('reviews'); //populating reviews;
+    if(!campground) {
+        req.flash('error', 'Campground does not exist.');
+        return res.redirect('/campgrounds');
+    }
     res.render('campgrounds/show', { campground });
 }))
 
 //edit a campground
 router.get('/:id/edit', catchAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id);
+    if(!campground) {
+        req.flash('error', 'Campground does not exist.');
+        return res.redirect('/campgrounds');
+    }    
     res.render('campgrounds/edit', { campground });
 }))
 
@@ -74,6 +75,7 @@ router.get('/:id/edit', catchAsync(async (req, res) => {
 router.put('/:id', validateCampground, catchAsync(async (req, res) => {
     const { id } = req.params; //deconstruct
     const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground }); //spread operator
+    req.flash('success', 'Campground updated'); //flash a message to user (session flash)
     res.redirect(`/campgrounds/${campground._id}`)
 }))
 
