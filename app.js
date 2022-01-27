@@ -1,10 +1,11 @@
-//load express module
+//load modules
 const express = require('express');
 const path = require('path'); //runs path module
 const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
 const ExpressError = require('./utils/ExpressError');// uses utitlity class for express errors
 const methodOverride = require('method-override'); //allows for overriding PUT, PATCH, etc.
+const session = require('express-session');
 const Joi = require('joi');
 
 //const { campgroundSchema } = require('./schemas.js');
@@ -38,6 +39,20 @@ app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.urlencoded({ extended: true })) //parse the request body
 app.use(methodOverride('_method'));//use method override
+app.use(express.static(path.join(__dirname, 'public'))); //serve the public directory
+
+//set session config and use. Test by starting up server, open browser > dev tools > application tab > cookies > click on server running. Send some requests (click on page links) to see cookies show up
+const sessionConfig = {
+    secret: 'secret', //a 'secret' to sign cookies
+    resave: false, //removes deprication warning
+    saveUninitialized: true, //removes deprication warning
+    cookie: {
+        httpOnly: true, //security not to reveal cookies to third party
+        expires: Date.now() + (1000 * 60 * 60 * 24 * 7), //expire in miliseconds * in minute * in hour * in day * in week = one week. Good to set. There is no default, and you don't want someone to stay logged in forever.
+        maxAge: 1000 * 60 * 60 * 24 * 7
+    }
+};
+app.use(session(sessionConfig));
 
 //use the campground and review
 app.use('/campgrounds', campgrounds); //prefix for routes and the route defined above
