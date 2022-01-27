@@ -49,7 +49,7 @@ router.post('/', validateCampground, catchAsync(async (req, res, next) => {
 //show page for a campground
 router.get('/:id', catchAsync(async (req, res) => {
     const id = req.params.id;
-    if (id.length > 24 || id.length < 24){ //My addition: makes sure ID is exactly 24 characters
+    if (id.length > 24 || id.length < 24){ //My addition: makes sure ID is exactly 24 characters before checking database
         req.flash('error', 'Campground does not exist.');
         return res.redirect('/campgrounds');
     }
