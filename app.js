@@ -6,6 +6,7 @@ const ejsMate = require('ejs-mate');
 const ExpressError = require('./utils/ExpressError');// uses utitlity class for express errors
 const methodOverride = require('method-override'); //allows for overriding PUT, PATCH, etc.
 const session = require('express-session');
+const flash = require('connect-flash');
 const Joi = require('joi');
 
 //const { campgroundSchema } = require('./schemas.js');
@@ -53,6 +54,14 @@ const sessionConfig = {
     }
 };
 app.use(session(sessionConfig));
+app.use(flash());
+
+//middleware to access the success message. gives all templates access to the res.locals.success property. Every request activates this and checks for 'success' in flash.
+app.use((req, res, next) => {
+    res.locals.success = req.flash('success');
+    res.locals.error = req.flash('error');
+    next();
+})
 
 //use the campground and review
 app.use('/campgrounds', campgrounds); //prefix for routes and the route defined above

@@ -40,10 +40,9 @@ router.get('/new', (req, res) => {
 router.post('/', validateCampground, catchAsync(async (req, res, next) => {
     //throws error if incomplete or incorrect type of data sent
     //if(!req.body.campground) throw new ExpressError('Invalid Campground Data', 400); 
-
-
     const campground = new Campground(req.body.campground);
     await campground.save();
+    req.flash('success', 'New campground created'); //flash a message to user (session flash)
     res.redirect(`/campgrounds/${campground._id}`)
 }))
 

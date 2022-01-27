@@ -11,15 +11,14 @@
     integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 </head>
 
-<body class="d-flex flex-column vh-100">
-  <!--vh:verticle height of page-->
-  <%- include('../partials/navbar') %>
-    <!--links to partials folder and the nav bar file-->
+<body class="d-flex flex-column vh-100"><!--vh:verticle height of page-->
+  <%- include('../partials/navbar') %><!--links to partials folder and the nav bar file-->
 
-    <main class="container mt-5"></main>
-    <!--mt is margin top-->
-    <%- body %>
-      </main>
+    <main class="container mt-5"></main><!--mt is margin top-->
+    <%= success %> <!-- displays the res.locals.success message from flash -->
+      <%- body %>
+      
+    </main>
 
       <!-- includes the footer in the partials folder and applies to any page that uses this boilerplate -->
       <%- include('../partials/footer') %>
