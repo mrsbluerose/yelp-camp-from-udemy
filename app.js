@@ -8,6 +8,9 @@ const methodOverride = require('method-override'); //allows for overriding PUT, 
 const session = require('express-session');
 const flash = require('connect-flash');
 const Joi = require('joi');
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
+const User = require('./models/user');
 
 //const { campgroundSchema } = require('./schemas.js');
 //const { reviewSchema } = require('./schemas.js');
@@ -17,6 +20,7 @@ const Joi = require('joi');
 
 const campgrounds = require('./routes/campgrounds'); //uses the routes defined in routes/campgrounds.js
 const reviews = require('./routes/reviews');
+const { getMaxListeners } = require('process');
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
     //useNewUrlParser: true,  //depricated since course video
@@ -56,12 +60,26 @@ const sessionConfig = {
 app.use(session(sessionConfig));
 app.use(flash());
 
+//passport
+app.use(passport.initialize());
+app.use(passport.session()); //make sure to use session first before this definition
+passport.use(new LocalStrategy(User.authenticate())); //tells passport to use local strategy from the passport package and to use the authentication method (from passport-local-mongoose)
+passport.serializeUser(User.serializeUser()); //tells passport how to serialize user or store them in session
+passport.deserializeUser(User.deserializeUser()); //how to get user out of session
+
 //middleware to access the success message. gives all templates access to the res.locals.success property. Every request activates this and checks for 'success' in flash.
 app.use((req, res, next) => {
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
     next();
 })
+
+////test adding a user
+// app.get('/fakeUser', async (req,res) => {
+//     const user = new User({email: "u@gmail.com", username: "this guy"});
+//     const newUser = await User.register(user, 'password123'); //uses register method https://github.com/saintedlama/passport-local-mongoose#readme
+//     res.send(newUser); //does all the work for us - hashes password, salts password, etc.
+// })
 
 //use the campground and review
 app.use('/campgrounds', campgrounds); //prefix for routes and the route defined above
