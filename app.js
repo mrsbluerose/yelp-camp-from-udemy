@@ -18,8 +18,9 @@ const User = require('./models/user');
 //const Campground = require('./models/campground'); //imports the Campground database
 //const Review = require('./models/review');
 
-const campgrounds = require('./routes/campgrounds'); //uses the routes defined in routes/campgrounds.js
-const reviews = require('./routes/reviews');
+const userRoutes = require('./routes/users')
+const campgroundRoutes = require('./routes/campgrounds'); //uses the routes defined in routes/campgrounds.js
+const reviewRoutes = require('./routes/reviews');
 const { getMaxListeners } = require('process');
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
@@ -82,8 +83,9 @@ app.use((req, res, next) => {
 // })
 
 //use the campground and review
-app.use('/campgrounds', campgrounds); //prefix for routes and the route defined above
-app.use('/campgrounds/:id/reviews', reviews);
+app.use('/', userRoutes);
+app.use('/campgrounds', campgroundRoutes); //prefix for routes and the route defined above
+app.use('/campgrounds/:id/reviews', reviewRoutes);
 
 //route (use render method of express. it knows the file extention because of the app.set above, and it looks in the views folder by default)
 app.get('/', (req, res) => {
