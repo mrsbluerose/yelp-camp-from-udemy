@@ -70,6 +70,7 @@ passport.deserializeUser(User.deserializeUser()); //how to get user out of sessi
 
 //middleware to access the success message. gives all templates access to the res.locals.success property. Every request activates this and checks for 'success' in flash.
 app.use((req, res, next) => {
+    res.locals.currentUser = req.user; //access to current user from passport
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
     next();

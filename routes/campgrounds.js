@@ -4,7 +4,9 @@ const catchAsync = require('../utils/catchAsync'); //uses catchAsync utility to 
 const ExpressError = require('../utils/ExpressError');// uses utitlity class for express errors
 const Campground = require('../models/campground'); //imports the Campground database
 const { campgroundSchema } = require('../schemas.js');
+const { isLoggedIn } = require('../middleware'); //from middleware file
 
+//middleware to make sure camground information is correctly entered
 const validateCampground = (req, res, next) => {
     const { error } = campgroundSchema.validate(req.body); //calls schemas.js
     if (error) {
@@ -31,7 +33,7 @@ router.get('/', catchAsync(async (req, res) => {
 }))
 
 //create new campground
-router.get('/new', (req, res) => {
+router.get('/new', isLoggedIn, (req, res) => { //isLoggedIn comes from middleware file
     res.render('campgrounds/new');
 })
 
@@ -62,7 +64,7 @@ router.get('/:id', catchAsync(async (req, res) => {
 }))
 
 //edit a campground
-router.get('/:id/edit', catchAsync(async (req, res) => {
+router.get('/:id/edit', isLoggedIn, catchAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id);
     if(!campground) {
         req.flash('error', 'Campground does not exist.');
@@ -80,7 +82,7 @@ router.put('/:id', validateCampground, catchAsync(async (req, res) => {
 }))
 
 //delete campground
-router.delete('/:id', catchAsync(async (req, res) => {
+router.delete('/:id', isLoggedIn, catchAsync(async (req, res) => {
     const { id } = req.params;
     await Campground.findByIdAndDelete(id);
     res.redirect('/campgrounds');
