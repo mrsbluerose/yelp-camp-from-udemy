@@ -33,7 +33,9 @@ router.get('/login', (req,res) => {
 
 router.post('/login', passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), (req, res) => { //uses local authenication strategy - see documentation
     req.flash('success', 'Welcome Back!');
-    res.redirect('/campgrounds');
+    const redirectUrl = req.session.returnTo || '/campgrounds'; //uses the stored returnTo URL for redirect if it exists
+    delete req.session.returnTo; //deletes the returnTo URL after using it
+    res.redirect(redirectUrl);
 })
 
 router.get('/logout', (req,res) => {
