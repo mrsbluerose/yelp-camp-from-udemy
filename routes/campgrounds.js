@@ -1,22 +1,10 @@
 const express = require('express');
 const router = express.Router(); //set all routes to be router.whatever
 const catchAsync = require('../utils/catchAsync'); //uses catchAsync utility to wrap asyn errors and forward to next
-const ExpressError = require('../utils/ExpressError');// uses utitlity class for express errors
 const Campground = require('../models/campground'); //imports the Campground database
-const { campgroundSchema } = require('../schemas.js');
 const { isLoggedIn } = require('../middleware'); //from middleware file
-
-//middleware to make sure camground information is correctly entered
-const validateCampground = (req, res, next) => {
-    const { error } = campgroundSchema.validate(req.body); //calls schemas.js
-    if (error) {
-        const msg = error.details.map(el => el.message).join(','); //maps over array of error details
-        throw new ExpressError(msg, 400); //utilize standard error method below
-    } else {
-        next();
-    }
-    //console.log(result);
-}
+const { isAuthor } = require('../middleware'); //from middleware file
+const { validateCampground } = require('../middleware'); //from middleware file
 
 //CAMPGROUND ROUTES
 //testing adding a document
@@ -52,12 +40,12 @@ router.post('/', isLoggedIn, validateCampground, catchAsync(async (req, res, nex
 //show page for a campground
 router.get('/:id', catchAsync(async (req, res) => {
     const id = req.params.id;
-    if (id.length > 24 || id.length < 24){ //My addition: makes sure ID is exactly 24 characters before checking database
+    if (id.length > 24 || id.length < 24) { //My addition: makes sure ID is exactly 24 characters before checking database
         req.flash('error', 'Campground does not exist.');
         return res.redirect('/campgrounds');
     }
     const campground = await Campground.findById(id).populate('reviews').populate('author'); //populating reviews and author;
-    if(!campground) {
+    if (!campground) {
         req.flash('error', 'Campground does not exist.');
         return res.redirect('/campgrounds');
     }
@@ -65,17 +53,18 @@ router.get('/:id', catchAsync(async (req, res) => {
 }))
 
 //edit a campground
-router.get('/:id/edit', isLoggedIn, catchAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id);
-    if(!campground) {
+router.get('/:id/edit', isLoggedIn, isAuthor, catchAsync(async (req, res) => {
+    const { id } = req.params; //deconstruct
+    const campground = await Campground.findById(id);
+    if (!campground) {
         req.flash('error', 'Campground does not exist.');
         return res.redirect('/campgrounds');
-    }    
+    }
     res.render('campgrounds/edit', { campground });
 }))
 
 //submit the edits
-router.put('/:id', validateCampground, catchAsync(async (req, res) => {
+router.put('/:id', isLoggedIn, validateCampground, isAuthor, catchAsync(async (req, res) => {
     const { id } = req.params; //deconstruct
     const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground }); //spread operator
     req.flash('success', 'Campground updated'); //flash a message to user (session flash)
@@ -83,8 +72,9 @@ router.put('/:id', validateCampground, catchAsync(async (req, res) => {
 }))
 
 //delete campground
-router.delete('/:id', isLoggedIn, catchAsync(async (req, res) => {
+router.delete('/:id', isLoggedIn, isAuthor, catchAsync(async (req, res) => {
     const { id } = req.params;
+    const campground = await Campground.findById(id);
     await Campground.findByIdAndDelete(id);
     res.redirect('/campgrounds');
 }))

@@ -1,24 +1,10 @@
 const express = require('express');
 const router = express.Router({mergeParams: true}); //set all routes to be router.whatever. use 'mergeParams' to see all params
-
+const catchAsync = require('../utils/catchAsync'); //uses catchAsync utility to wrap asyn errors and forward to next
 const Campground = require('../models/campground'); //imports the Campground database
 const Review = require('../models/review');
+const { validateReview } = require('../middleware'); //from middleware file
 
-const { reviewSchema } = require('../schemas.js');
-
-const ExpressError = require('../utils/ExpressError');// uses utitlity class for express errors
-const catchAsync = require('../utils/catchAsync'); //uses catchAsync utility to wrap asyn errors and forward to next
-
-const validateReview = (req, res, next) => {
-    const { error } = reviewSchema.validate(req.body); //calls schemas.js
-    if (error) {
-        const msg = error.details.map(el => el.message).join(','); //maps over array of error details
-        throw new ExpressError(msg, 400); //utilize standard error method below
-    } else {
-        next();
-    }
-    //console.log(result);
-}
 
 //REVIEW ROUTES
 router.post('/', validateReview, catchAsync(async(req,res) => {
