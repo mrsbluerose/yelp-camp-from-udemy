@@ -39,10 +39,11 @@ router.get('/new', isLoggedIn, (req, res) => { //isLoggedIn comes from middlewar
 
 //save new campground
 //uses async wrapper class in utils/catchAsync
-router.post('/', validateCampground, catchAsync(async (req, res, next) => {
+router.post('/', isLoggedIn, validateCampground, catchAsync(async (req, res, next) => {
     //throws error if incomplete or incorrect type of data sent
     //if(!req.body.campground) throw new ExpressError('Invalid Campground Data', 400); 
     const campground = new Campground(req.body.campground);
+    campground.author = req.user._id; //saves the currently logged in user as the author 
     await campground.save();
     req.flash('success', 'New campground created'); //flash a message to user (session flash)
     res.redirect(`/campgrounds/${campground._id}`)
@@ -55,7 +56,7 @@ router.get('/:id', catchAsync(async (req, res) => {
         req.flash('error', 'Campground does not exist.');
         return res.redirect('/campgrounds');
     }
-    const campground = await Campground.findById(id).populate('reviews'); //populating reviews;
+    const campground = await Campground.findById(id).populate('reviews').populate('author'); //populating reviews and author;
     if(!campground) {
         req.flash('error', 'Campground does not exist.');
         return res.redirect('/campgrounds');
