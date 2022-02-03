@@ -1,6 +1,7 @@
 const ExpressError = require('./utils/ExpressError');// uses utitlity class for express errors
 const { campgroundSchema, reviewSchema } = require('./schemas.js'); //joi schema
 const Campground = require('./models/campground'); //imports the Campground database
+const Review = require('./models/review'); //imports the Campground database
 
 //middlware to check if a user is logged in
 module.exports.isLoggedIn = (req, res, next) => {
@@ -46,4 +47,15 @@ module.exports.validateReview = (req, res, next) => {
         next();
     }
     //console.log(result);
+}
+
+//middlware to see if current user is author of review
+module.exports.isReviewAuthor = async(req, res, next) => {
+    const{ id, reviewId } = req.params;
+    const review = await Review.findById(reviewId);
+        if (!review.author.equals(req.user._id)) {
+            req.flash('error', 'You do not have permission for this action.');
+            return res.redirect(`/campgrounds/${id}`);
+        }
+    next();
 }
