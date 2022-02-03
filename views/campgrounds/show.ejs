@@ -1,4 +1,5 @@
 <% layout('/layouts/boilerplate')%>
+    <link rel="stylesheet" href="/stylesheets/stars.css">
     <!-- using ejs-mate for layout design -->
 
     <div class="row">
@@ -52,25 +53,29 @@
                     <button class="btn btn-primary">Submit</button>
                 </form>
             <% } %>
-                <% for(let review of campground.reviews) { %>
-                    <div class="card mb-3">
+            <% for(let review of campground.reviews) { %>
+                <div class="card mb-3">
 
-                        <div class="card-body">
-                            <h5 class="card-title">Rating: <%= review.rating %>
-                            </h5>
-                            <h6 class="card-subtitle mb-2 text-muted">By <%= review.author.username %></h6>
-                            <p class="card-text">Review: <%= review.body %>
-                            </p>
-                            <% if(currentUser && review.author.equals(currentUser._id)) { %> <!--only the review author can delete their review-->
-                            <form action="/campgrounds/<%=campground._id%>/reviews/<%=review._id%>?_method=DELETE"
+                    <div class="card-body">
+                        <h5><%= review.author.username %></h5>
+                            <h3>Rated element name</h3>
+                                <p class="starability-result" data-rating="<%= review.rating %>"> <!--from starability css-->
+                                    Rated: <%= review.rating %> stars
+                                </p>
+                        <p class="card-text">Review: <%= review.body %>
+                        </p>
+                        <% if(currentUser && review.author.equals(currentUser._id)) { %>
+                            <!--only the review author can delete their review-->
+                            <form
+                                action="/campgrounds/<%=campground._id%>/reviews/<%=review._id%>?_method=DELETE"
                                 method="POST">
                                 <button class="btn btn-sm btn-danger">Delete</button>
                             </form>
-                            <% } %>
-                        </div>
-
+                        <% } %>
                     </div>
-                <% } %>
-            
+
+                </div>
+            <% } %>
+
         </div>
     </div>
