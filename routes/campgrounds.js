@@ -9,11 +9,7 @@ const { isLoggedIn, isAuthor, validateCampground } = require('../middleware'); /
 
 router.route('/')
     .get(catchAsync(campgrounds.index)) //show of all campgrounds
-    //.post(isLoggedIn, validateCampground, catchAsync(campgrounds.createCampground)); //save new campground
-    .post(upload.array('image'), (req, res) => {
-        console.log(req.body, req.files);
-        res.send("it worked");
-    })
+    .post(isLoggedIn, upload.array('image'), validateCampground, catchAsync(campgrounds.createCampground)); //save new campground. include image as an array to upload to cloudinary (put before validateCampground)
 
 router.get('/new', isLoggedIn, campgrounds.renderNewForm); //create new campground
 

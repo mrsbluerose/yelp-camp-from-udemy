@@ -10,11 +10,11 @@ module.exports.renderNewForm = (req, res) => { //isLoggedIn comes from middlewar
 };
 
 module.exports.createCampground = async (req, res, next) => {
-    //throws error if incomplete or incorrect type of data sent
-    //if(!req.body.campground) throw new ExpressError('Invalid Campground Data', 400); 
     const campground = new Campground(req.body.campground);
+    campground.images = req.files.map( f => ({ url: f.path, filename: f.filename })); //map over files submitted to cloudinary
     campground.author = req.user._id; //saves the currently logged in user as the author 
     await campground.save();
+    console.log(campground); //////
     req.flash('success', 'New campground created'); //flash a message to user (session flash)
     res.redirect(`/campgrounds/${campground._id}`)
 };

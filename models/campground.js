@@ -4,7 +4,12 @@ const Schema = mongoose.Schema; //shortcut for references to schema
 
 const CampgroundSchema = new Schema({
     title: String,
-    image: String,
+    images: [ //array to hold image name and url for cloudinary
+        {
+            url: String,
+            filename: String
+        }
+    ],
     price: Number,
     description: String,
     location: String,
