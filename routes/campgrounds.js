@@ -3,7 +3,8 @@ const router = express.Router(); //set all routes to be router.whatever
 const catchAsync = require('../utils/catchAsync'); //uses catchAsync utility to wrap async errors and forward to next
 const campgrounds = require('../controllers/campgrounds');
 const multer  = require('multer')
-const upload = multer({ dest: 'uploads/' }) //define a destination
+const { storage } = require('../cloudinary');
+const upload = multer({ storage }) //define a destination (storage is from cloudinary)
 const { isLoggedIn, isAuthor, validateCampground } = require('../middleware'); //from middleware file
 
 router.route('/')
