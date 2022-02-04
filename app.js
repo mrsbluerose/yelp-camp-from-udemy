@@ -1,3 +1,8 @@
+//load env -- secret file stuff. See .env file
+if (process.env.NODE_ENV !== "production") {
+    require('dotenv').config();
+}
+
 //load modules
 const express = require('express');
 const path = require('path'); //runs path module
@@ -7,16 +12,9 @@ const ExpressError = require('./utils/ExpressError');// uses utitlity class for 
 const methodOverride = require('method-override'); //allows for overriding PUT, PATCH, etc.
 const session = require('express-session');
 const flash = require('connect-flash');
-const Joi = require('joi');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
-
-//const { campgroundSchema } = require('./schemas.js');
-//const { reviewSchema } = require('./schemas.js');
-//const catchAsync = require('./utils/catchAsync'); //uses catchAsync utility to wrap asyn errors and forward to next
-//const Campground = require('./models/campground'); //imports the Campground database
-//const Review = require('./models/review');
 
 const userRoutes = require('./routes/users')
 const campgroundRoutes = require('./routes/campgrounds'); //uses the routes defined in routes/campgrounds.js
