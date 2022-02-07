@@ -50,6 +50,9 @@ module.exports.renderEditForm = async (req, res) => {
 module.exports.updateCampground = async (req, res) => {
     const { id } = req.params; //deconstruct
     const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground }); //spread operator
+    const images = req.files.map( f => ({ url: f.path, filename: f.filename }));
+    campground.images.push(...images); //map over files submitted to cloudinary
+    await campground.save();
     req.flash('success', 'Campground updated'); //flash a message to user (session flash)
     res.redirect(`/campgrounds/${campground._id}`)
 };

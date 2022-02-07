@@ -15,7 +15,7 @@ router.get('/new', isLoggedIn, campgrounds.renderNewForm); //create new campgrou
 
 router.route('/:id')
     .get(catchAsync(campgrounds.showCampground))//show page for a campground
-    .put(isLoggedIn, validateCampground, isAuthor, catchAsync(campgrounds.updateCampground)) //submit the edits
+    .put(isLoggedIn, isAuthor, upload.array('image'), validateCampground, catchAsync(campgrounds.updateCampground)) //submit the edits
     .delete(isLoggedIn, isAuthor, catchAsync(campgrounds.deleteCampground)) //delete campground
 
 router.get('/:id/edit', isLoggedIn, isAuthor, catchAsync(campgrounds.renderEditForm)) //edit a campground
