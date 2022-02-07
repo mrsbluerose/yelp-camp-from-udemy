@@ -13,10 +13,7 @@
                     <label class="form-label" for="location">Location</label>
                     <input class="form-control" type="text" id="location" name="campground[location]" value="<%=campground.location%>" required>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label" for="image">Add Images</label>
-                    <input type="file" name="image" id="image" multiple>
-                </div>
+
                 <div class="mb-3">
                     <label class="form-label" for="price">Campground Price</label>
                     <div class="input-group">
@@ -29,6 +26,17 @@
                     <textarea class="form-control" type="text" id="description"
                         name="campground[description]" required><%= campground.description %></textarea>
                 </div>
+
+                <!--use a file upload instead of url. set to accept multiple images-->
+                <!-- bootstrap for nicer file input button -->
+                <div class="mb-3">
+                    <!--custom-file classes for bootstrap custom file names in upload from https://www.npmjs.com/package/bs-custom-file-input-->
+                    <div class="form-file custom-file">
+                        <input class="form-control custom-file-input" type="file" id="image" name="image" multiple>
+                        <label for="image" class="form-label custom-file-label">Add image(s)</label>
+                    </div>
+                </div>
+
                 <div class="mb-3">
                     <button class="btn-success">Update Campground</button>
                 </div>

@@ -6,6 +6,8 @@ bootstrap validation. Then add 'required' to desired inputs.
 (function () {
     'use strict'
 
+    bsCustomFileInput.init(); //calls custom bootstrap file input script in boilerplate file. from https://www.npmjs.com/package/bs-custom-file-input
+    
     // Fetch all the forms we want to apply custom Bootstrap validation styles to
     const forms = document.querySelectorAll('.needs-validation') //changed to constant
 

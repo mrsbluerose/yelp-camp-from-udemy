@@ -2,58 +2,74 @@
 
 const mongoose = require('mongoose');
 const cities = require('./cities'); //import cities file
-const {places, descriptors} = require('./seedHelpers');  //destructures from file
+const { places, descriptors } = require('./seedHelpers');  //destructures from file
 const Campground = require('../models/campground');
 //const Campground = require('./models/campground'); // testing adding a document
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
-    //useNewUrlParser: true,  //depricated since course video
-    //useCreateIndex: true,  //depricated since course video
-    //useUnifiedTopology: true  //depricated since course video
+  //useNewUrlParser: true,  //depricated since course video
+  //useCreateIndex: true,  //depricated since course video
+  //useUnifiedTopology: true  //depricated since course video
 });
 
 //bind connection to error and open events
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
-    console.log("Database connected");
+  console.log("Database connected");
 })
 
 //create names
 const sample = array => array[Math.floor(Math.random() * array.length)];
 
 //clear database and add 50 new documents
-const seedDB = async() => {
-    await Campground.deleteMany({});
-    for(let i=0;i<50;i++){
-        const random1000 = Math.floor(Math.random() * 1000);
-        const price = Math.floor(Math.random() * 30) + 10;
-        const camp = new Campground({
-            author: '61fabfac779c47d47714217b',
-            location: `${cities[random1000].city}, ${cities[random1000].state}`,
-            title: `${sample(descriptors)} ${sample(places)}`, 
-            images: [
-                {
-                  url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644256190/YelpCamp/qy20nflreqkzjwls0gbr.jpg',
-                  filename: 'YelpCamp/qy20nflreqkzjwls0gbr'
-                },
-                {
-                  url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644256191/YelpCamp/qurqfisxs7mshaccnnk5.jpg',
-                  filename: 'YelpCamp/qurqfisxs7mshaccnnk5'
-                },
-                {
-                  url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644256191/YelpCamp/hqbplp4dvcmz2sfyevkk.jpg',
-                  filename: 'YelpCamp/hqbplp4dvcmz2sfyevkk'
-                }
-              ],
-            description: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Praesentium ut non accusantium unde magnam omnis reprehenderit animi enim quibusdam quam ipsum tempora neque nulla, id perferendis culpa itaque, quidem minus.',
-            price
-        })
-        await camp.save();
-    }
+const seedDB = async () => {
+  await Campground.deleteMany({});
+  for (let i = 0; i < 50; i++) {
+    const random1000 = Math.floor(Math.random() * 1000);
+    const price = Math.floor(Math.random() * 30) + 10;
+    const camp = new Campground({
+      author: '61fabfac779c47d47714217b',
+      location: `${cities[random1000].city}, ${cities[random1000].state}`,
+      title: `${sample(descriptors)} ${sample(places)}`,
+      images: [
+        {
+          url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644256190/YelpCamp/qy20nflreqkzjwls0gbr.jpg',
+          filename: 'YelpCamp/qy20nflreqkzjwls0gbr'
+        },
+        {
+          url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644256191/YelpCamp/qurqfisxs7mshaccnnk5.jpg',
+          filename: 'YelpCamp/qurqfisxs7mshaccnnk5'
+        },
+        {
+          url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644256191/YelpCamp/hqbplp4dvcmz2sfyevkk.jpg',
+          filename: 'YelpCamp/hqbplp4dvcmz2sfyevkk'
+        },
+        {
+          url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644259856/YelpCamp/uasjdft2ufate57ukprc.jpg',
+          filename: 'YelpCamp/uasjdft2ufate57ukprc'
+        },
+        {
+          url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644259857/YelpCamp/kkt986luialkw7af3jtk.jpg',
+          filename: 'YelpCamp/kkt986luialkw7af3jtk'
+        },
+        {
+          url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644259858/YelpCamp/dfxqfidzrjvpt4ycjzy7.jpg',
+          filename: 'YelpCamp/dfxqfidzrjvpt4ycjzy7'
+        },
+        {
+          url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644259859/YelpCamp/kkzidpnelpz5j165xiqr.jpg',
+          filename: 'YelpCamp/kkzidpnelpz5j165xiqr'
+        }
+      ],
+      description: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Praesentium ut non accusantium unde magnam omnis reprehenderit animi enim quibusdam quam ipsum tempora neque nulla, id perferendis culpa itaque, quidem minus.',
+      price
+    })
+    await camp.save();
+  }
 }
 
 //execute the seed function and close the database connection
 seedDB().then(() => {
-    mongoose.connection.close();
+  mongoose.connection.close();
 });

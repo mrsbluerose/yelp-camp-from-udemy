@@ -3,7 +3,8 @@
     <div class="row">
         <h1 class="text-center"> New Campground</h1>
         <div class="col-6 offset-3">
-            <form action="/campgrounds" method="POST" novalidate class="needs-validation" enctype="multipart/form-data"> <!--enctype sets encoding type to allow for uploading files. Ties in with Mutler middleware-->
+            <form action="/campgrounds" method="POST" novalidate class="needs-validation" enctype="multipart/form-data">
+                <!--enctype sets encoding type to allow for uploading files. Ties in with Mutler middleware-->
                 <div class="mb-3">
                     <label class="form-label" for="title">Title</label>
                     <input class="form-control" type="text" id="title" name="campground[title]" required>
@@ -13,11 +14,7 @@
                     <label class="form-label" for="location">Location</label>
                     <input class="form-control" type="text" id="location" name="campground[location]" required>
                 </div>
-                <input type="file" name="image" id="image" multiple> <!--use a file upload instead of url. set to accept multiple images-->
-                <!-- <div class="mb-3">
-                    <label class="form-label" for="image">Image URL</label>
-                    <input class="form-control" type="text" id="image" name="campground[image]" required>
-                </div> -->
+
                 <div class="mb-3">
                     <label class="form-label" for="price">Campground Price</label>
                     <div class="input-group">
@@ -31,6 +28,17 @@
                     <textarea class="form-control" type="text" id="description" name="campground[description]"
                         required></textarea>
                 </div>
+
+                <!--use a file upload instead of url. set to accept multiple images-->
+                <!-- bootstrap for nicer file input button -->
+                <div class="mb-3">
+                    <!--custom-file classes for bootstrap custom file names in upload from https://www.npmjs.com/package/bs-custom-file-input-->
+                    <div class="form-file custom-file">
+                        <input class="form-control custom-file-input" type="file" id="image" name="image" multiple>
+                        <label for="image" class="form-label custom-file-label">Insert image(s)</label>
+                    </div>
+                </div>
+
                 <div class="mb-3">
                     <button class="btn-success">Add Campground</button>
                 </div>
