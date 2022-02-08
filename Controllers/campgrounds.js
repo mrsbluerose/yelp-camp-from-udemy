@@ -1,4 +1,5 @@
 const Campground = require('../models/campground'); //imports the Campground database
+const { cloudinary } = require('../cloudinary') //using cloudinary methods to delete photos when editing campground
 
 module.exports.index = async (req, res) => {
     const campgrounds = await Campground.find({})
@@ -11,7 +12,7 @@ module.exports.renderNewForm = (req, res) => { //isLoggedIn comes from middlewar
 
 module.exports.createCampground = async (req, res, next) => {
     const campground = new Campground(req.body.campground);
-    campground.images = req.files.map( f => ({ url: f.path, filename: f.filename })); //map over files submitted to cloudinary
+    campground.images = req.files.map(f => ({ url: f.path, filename: f.filename })); //map over files submitted to cloudinary
     campground.author = req.user._id; //saves the currently logged in user as the author 
     await campground.save();
     console.log(campground); //////
@@ -26,10 +27,11 @@ module.exports.showCampground = async (req, res) => {
         return res.redirect('/campgrounds');
     }
     const campground = await Campground.findById(id).populate({
-        path:'reviews', //populating reviews;
+        path: 'reviews', //populating reviews;
         populate: {
             path: 'author' //populating review author;
-        }}).populate('author'); //populating campground author;
+        }
+    }).populate('author'); //populating campground author;
     if (!campground) {
         req.flash('error', 'Campground does not exist.');
         return res.redirect('/campgrounds');
@@ -50,8 +52,14 @@ module.exports.renderEditForm = async (req, res) => {
 module.exports.updateCampground = async (req, res) => {
     const { id } = req.params; //deconstruct
     const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground }); //spread operator
-    const images = req.files.map( f => ({ url: f.path, filename: f.filename }));
+    const images = req.files.map(f => ({ url: f.path, filename: f.filename }));
     campground.images.push(...images); //map over files submitted to cloudinary
+    if (req.body.deleteImages) {
+        for(let filename of req.body.deleteImages){
+            await cloudinary.uploader.destroy(filename); //use the cloudinary uploader to delete photos from cloudinary as well
+        }
+        await campground.updateOne({ $pull: { images: { filename: { $in: req.body.deleteImages } } } }) //uses pull to remove any filnames located in deleteImages array (from req.body) from the campground document's images in database.
+    }
     await campground.save();
     req.flash('success', 'Campground updated'); //flash a message to user (session flash)
     res.redirect(`/campgrounds/${campground._id}`)
