@@ -2,14 +2,23 @@ const mongoose = require('mongoose');
 const Review = require('./review');
 const Schema = mongoose.Schema; //shortcut for references to schema
 
+const ImageSchema = new Schema ({ //array to hold image name and url for cloudinary
+    url: String,
+    filename: String
+});
+
+//use method to display thumbnail sized photos
+ImageSchema.virtual('thumbnail').get(function() { //virtual property not stored in mongo. good for temorary information
+    return this.url.replace('/upload', '/upload/w_200');
+})
+
 const CampgroundSchema = new Schema({
     title: String,
-    images: [ //array to hold image name and url for cloudinary
-        {
-            url: String,
-            filename: String
-        }
-    ],
+    // images: {
+    //     url: String,
+    //     filename: String
+    // },
+    images: [ImageSchema], 
     price: Number,
     description: String,
     location: String,

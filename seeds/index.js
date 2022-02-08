@@ -22,7 +22,8 @@ db.once("open", () => {
 //create names
 const sample = array => array[Math.floor(Math.random() * array.length)];
 
-//clear database and add 50 new documents
+//clear database and add 50 new documents --MUST HAVE FILENAMES AND URLS FOR PHOTOS
+//see cloudinary > yelp camp seed > download/upload to yelp camp
 const seedDB = async () => {
   await Campground.deleteMany({});
   for (let i = 0; i < 50; i++) {
@@ -34,32 +35,32 @@ const seedDB = async () => {
       title: `${sample(descriptors)} ${sample(places)}`,
       images: [
         {
-          url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644256190/YelpCamp/qy20nflreqkzjwls0gbr.jpg',
-          filename: 'YelpCamp/qy20nflreqkzjwls0gbr'
-        },
-        {
-          url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644256191/YelpCamp/qurqfisxs7mshaccnnk5.jpg',
-          filename: 'YelpCamp/qurqfisxs7mshaccnnk5'
-        },
-        {
-          url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644256191/YelpCamp/hqbplp4dvcmz2sfyevkk.jpg',
-          filename: 'YelpCamp/hqbplp4dvcmz2sfyevkk'
-        },
-        {
-          url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644259856/YelpCamp/uasjdft2ufate57ukprc.jpg',
-          filename: 'YelpCamp/uasjdft2ufate57ukprc'
-        },
-        {
-          url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644259857/YelpCamp/kkt986luialkw7af3jtk.jpg',
-          filename: 'YelpCamp/kkt986luialkw7af3jtk'
-        },
-        {
-          url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644259858/YelpCamp/dfxqfidzrjvpt4ycjzy7.jpg',
-          filename: 'YelpCamp/dfxqfidzrjvpt4ycjzy7'
-        },
-        {
-          url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644259859/YelpCamp/kkzidpnelpz5j165xiqr.jpg',
-          filename: 'YelpCamp/kkzidpnelpz5j165xiqr'
+          url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644353515/YelpCamp/j7hupidvdf5qnlr1tn1z.jpg',
+        filename: 'YelpCamp/j7hupidvdf5qnlr1tn1z'
+      },
+      {
+        url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644353517/YelpCamp/urxodimrxprcsoi0oumc.jpg',
+        filename: 'YelpCamp/urxodimrxprcsoi0oumc'
+      },
+      {
+        url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644353517/YelpCamp/xlg7b7ih6c340v2ahmb8.jpg',
+        filename: 'YelpCamp/xlg7b7ih6c340v2ahmb8'
+      },
+      {
+        url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644353518/YelpCamp/hs4mu89rf6zf9k1nnjkx.jpg',
+        filename: 'YelpCamp/hs4mu89rf6zf9k1nnjkx'
+      },
+      {
+        url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644353518/YelpCamp/j2gfikqakhcb5wolnfrn.jpg',
+        filename: 'YelpCamp/j2gfikqakhcb5wolnfrn'
+      },
+      {
+        url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644353520/YelpCamp/wsfd0x8ib3ywe4f5ectc.jpg',
+        filename: 'YelpCamp/wsfd0x8ib3ywe4f5ectc'
+      },
+      {
+        url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644353521/YelpCamp/pxvuqeuu8y0be5rqslhv.jpg',
+        filename: 'YelpCamp/pxvuqeuu8y0be5rqslhv'
         }
       ],
       description: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Praesentium ut non accusantium unde magnam omnis reprehenderit animi enim quibusdam quam ipsum tempora neque nulla, id perferendis culpa itaque, quidem minus.',
