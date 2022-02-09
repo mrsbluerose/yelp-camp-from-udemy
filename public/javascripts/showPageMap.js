@@ -18,17 +18,17 @@
 mapboxgl.accessToken = mapToken;
 const map = new mapboxgl.Map({
     container: 'map',
-    style: 'mapbox://styles/mapbox/streets-v11', // stylesheet location
+    style: 'mapbox://styles/mapbox/light-v10', // stylesheet location //can choose differnt styles
     center: campground.geometry.coordinates, // starting position [lng, lat]
     zoom: 10 // starting zoom
 });
 
 const marker1 = new mapboxgl.Marker()
     .setLngLat(campground.geometry.coordinates)//[-74, 40])
-    // .setPopup(
-    //     new mapboxgl.Popup({ offset: 25 })
-    //         .setHTML(
-    //             `<h3>${campground.title}</h3><p>${campground.location}</p>`
-    //         )
-    // )
+    .setPopup(
+        new mapboxgl.Popup({ offset: 25 })
+            .setHTML(
+                `<h4>${campground.title}</h4><p>${campground.location}</p>`
+            )
+    )
     .addTo(map);
