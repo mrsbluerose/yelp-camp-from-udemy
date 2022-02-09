@@ -30,7 +30,9 @@ const seedDB = async () => {
     const random1000 = Math.floor(Math.random() * 1000);
     const price = Math.floor(Math.random() * 30) + 10;
     const camp = new Campground({
+      //your user ID
       author: '61fabfac779c47d47714217b',
+      geometry: { type: 'Point', coordinates: [ -104.9653, 39.7348 ] }, //sets all maps to Denver
       location: `${cities[random1000].city}, ${cities[random1000].state}`,
       title: `${sample(descriptors)} ${sample(places)}`,
       images: [
