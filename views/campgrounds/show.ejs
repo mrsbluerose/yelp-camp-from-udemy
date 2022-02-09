@@ -1,29 +1,32 @@
 <% layout('/layouts/boilerplate')%>
     <link rel="stylesheet" href="/stylesheets/stars.css">
+
     <!-- using ejs-mate for layout design -->
     <div class="row">
         <div class="col-6">
-
+            <div id='map' style='width: 400px; height: 300px;'></div>
             <div id="carouselControls" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
-                    <% campground.images.forEach((img, i) => { %>
-                        <div class="carousel-item <%= i === 0 ? 'active' : '' %> " > <!-- use an if statement to determine active image -->
+                    <% campground.images.forEach((img, i)=> { %>
+                        <div class="carousel-item <%= i === 0 ? 'active' : '' %> ">
+                            <!-- use an if statement to determine active image -->
                             <img src="<%= img.url %>" class="d-block w-100" alt="">
                         </div>
-                    <% }) %>
+                        <% }) %>
                 </div>
-                <% if(campground.images.length > 1) {%> <!-- don't display arrow buttons if there is only one image -->
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselControls"
-                    data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselControls"
-                    data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
-                <% } %>
+                <% if(campground.images.length> 1) {%>
+                    <!-- don't display arrow buttons if there is only one image -->
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselControls"
+                        data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselControls"
+                        data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                    <% } %>
             </div>
 
             <div class="card mb-3">
@@ -53,6 +56,9 @@
                             <a href="/campgrounds">All Campgrounds</a>
                         </div>
             </div>
+
+
+
         </div>
 
         <div class="col-6">
@@ -114,3 +120,10 @@
 
         </div>
     </div>
+
+    <script>
+        const mapToken = '<%-process.env.MAPBOX_TOKEN%>';
+        const campground = <%- JSON.stringify(campground) %>
+    </script>
+    
+    <script src="/javascripts/showPageMap.js"></script> <!-- refers to public/javascripts/showPageMap -->

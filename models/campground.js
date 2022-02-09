@@ -21,6 +21,17 @@ const CampgroundSchema = new Schema({
     images: [ImageSchema], 
     price: Number,
     description: String,
+    geometry: { //used from Mongoose docs https://mongoosejs.com/docs/geojson.html. Mongoose has lots of geo functionality and requires this format
+        type: {
+          type: String, // Don't do `{ location: { type: String } }`
+          enum: ['Point'], // 'location.type' must be 'Point'
+          required: true
+        },
+        coordinates: {
+          type: [Number],
+          required: true
+        }
+      },
     location: String,
     author: { //adds field for user author of campground
         type: Schema.Types.ObjectId,
