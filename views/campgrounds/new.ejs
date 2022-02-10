@@ -2,49 +2,53 @@
     <!-- using ejs-mate for layout design -->
     <div class="row">
         <h1 class="text-center"> New Campground</h1>
-        <div class="col-6 offset-3">
-            <form action="/campgrounds" method="POST" novalidate class="needs-validation" enctype="multipart/form-data">
-                <!--enctype sets encoding type to allow for uploading files. Ties in with Mutler middleware-->
-                <div class="mb-3">
-                    <label class="form-label" for="title">Title</label>
-                    <input class="form-control" type="text" id="title" name="campground[title]" required>
-                    <!--campground[title] pulls from grouped response properties or something like that-->
-                </div>
-                <div class="mb-3">
-                    <label class="form-label" for="location">Location</label>
-                    <input class="form-control" type="text" id="location" name="campground[location]" required>
-                </div>
+        <div class="col-md-6 offset-md-3">
 
-                <div class="mb-3">
-                    <label class="form-label" for="price">Campground Price</label>
-                    <div class="input-group">
-                        <span class="input-group-text" id="price-label">$</span>
-                        <input type="text" class="form-control" id="price" name="campground[price]" placeholder="0.00"
-                            aria-label="price" aria-describeby="price-label" required>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label" for="description">Description</label>
-                    <textarea class="form-control" type="text" id="description" name="campground[description]"
-                        required></textarea>
-                </div>
+                    <form action="/campgrounds" method="POST" novalidate class="needs-validation"
+                        enctype="multipart/form-data">
+                        <!--enctype sets encoding type to allow for uploading files. Ties in with Mutler middleware-->
+                        <div class="mb-3">
+                            <label class="form-label" for="title">Title</label>
+                            <input class="form-control" type="text" id="title" name="campground[title]" required>
+                            <!--campground[title] pulls from grouped response properties or something like that-->
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="location">Location</label>
+                            <input class="form-control" type="text" id="location" name="campground[location]" required>
+                        </div>
 
-                <!--use a file upload instead of url. set to accept multiple images-->
-                <!-- bootstrap for nicer file input button -->
-                <div class="mb-3">
-                    <!--custom-file classes for bootstrap custom file names in upload from https://www.npmjs.com/package/bs-custom-file-input-->
-                    <div class="form-file custom-file">
-                        <input class="form-control custom-file-input" type="file" id="image" name="image" multiple>
-                        <label for="image" class="form-label custom-file-label">Insert image(s)</label>
-                    </div>
-                </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="price">Campground Price</label>
+                            <div class="input-group">
+                                <span class="input-group-text" id="price-label">$</span>
+                                <input type="text" class="form-control" id="price" name="campground[price]"
+                                    placeholder="0.00" aria-label="price" aria-describeby="price-label" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="description">Description</label>
+                            <textarea class="form-control" type="text" id="description" name="campground[description]"
+                                required></textarea>
+                        </div>
 
-                <div class="mb-3">
-                    <button class="btn-success">Add Campground</button>
-                </div>
-            </form>
-            <footer>
-                <a href="/campgrounds">All Campgrounds</a>
-            </footer>
+                        <!--use a file upload instead of url. set to accept multiple images-->
+                        <!-- bootstrap for nicer file input button -->
+                        <div class="mb-3">
+                            <!--custom-file classes for bootstrap custom file names in upload from https://www.npmjs.com/package/bs-custom-file-input-->
+                            <div class="form-file custom-file">
+                                <input class="form-control custom-file-input" type="file" id="image" name="image"
+                                    multiple>
+                                <label for="image" class="form-label custom-file-label">Insert image(s)</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <button class="btn-success">Add Campground</button>
+                        </div>
+                    </form>
+                    <footer>
+                        <a href="/campgrounds">All Campgrounds</a>
+                    </footer>
+
         </div>
     </div>
