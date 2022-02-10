@@ -26,29 +26,34 @@ const sample = array => array[Math.floor(Math.random() * array.length)];
 //see cloudinary > yelp camp seed > download/upload to yelp camp
 const seedDB = async () => {
   await Campground.deleteMany({});
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 300; i++) {
     const random1000 = Math.floor(Math.random() * 1000);
     const price = Math.floor(Math.random() * 30) + 10;
     const camp = new Campground({
       //your user ID
       author: '61fabfac779c47d47714217b',
-      geometry: { type: 'Point', coordinates: [ -104.9653, 39.7348 ] }, //sets all maps to Denver
+      geometry: { 
+        type: 'Point', 
+        coordinates: [ 
+          cities[random1000].longitude, 
+          cities[random1000].latitude ] 
+      }, 
       location: `${cities[random1000].city}, ${cities[random1000].state}`,
       title: `${sample(descriptors)} ${sample(places)}`,
       images: [
         {
-          url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644353515/YelpCamp/j7hupidvdf5qnlr1tn1z.jpg',
-        filename: 'YelpCamp/j7hupidvdf5qnlr1tn1z'
-      },
-      {
-        url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644353517/YelpCamp/urxodimrxprcsoi0oumc.jpg',
-        filename: 'YelpCamp/urxodimrxprcsoi0oumc'
-      },
-      {
-        url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644353517/YelpCamp/xlg7b7ih6c340v2ahmb8.jpg',
-        filename: 'YelpCamp/xlg7b7ih6c340v2ahmb8'
-      },
-      {
+      //     url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644353515/YelpCamp/j7hupidvdf5qnlr1tn1z.jpg',
+      //   filename: 'YelpCamp/j7hupidvdf5qnlr1tn1z'
+      // },
+      // {
+      //   url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644353517/YelpCamp/urxodimrxprcsoi0oumc.jpg',
+      //   filename: 'YelpCamp/urxodimrxprcsoi0oumc'
+      // },
+      // {
+      //   url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644353517/YelpCamp/xlg7b7ih6c340v2ahmb8.jpg',
+      //   filename: 'YelpCamp/xlg7b7ih6c340v2ahmb8'
+      // },
+      // {
         url: 'https://res.cloudinary.com/mrsblue/image/upload/v1644353518/YelpCamp/hs4mu89rf6zf9k1nnjkx.jpg',
         filename: 'YelpCamp/hs4mu89rf6zf9k1nnjkx'
       },
