@@ -23,6 +23,8 @@ const map = new mapboxgl.Map({
     zoom: 10 // starting zoom
 });
 
+map.addControl(new mapboxgl.NavigationControl()); //found in examples > search controls https://docs.mapbox.com/mapbox-gl-js/api/map/#map#addcontrol
+
 const marker1 = new mapboxgl.Marker()
     .setLngLat(campground.geometry.coordinates)//[-74, 40])
     .setPopup(
