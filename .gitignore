@@ -1,5 +1,7 @@
 ## initial content credit: https://dedunu.info/2014/11/gitignore-file-for-java.html
 
+seeds/photos.js
+
 ##############################
 ## Visual Studio Code
 #additional credit: https://github.com/Automattic/mongoose/blob/master/.gitignore

@@ -15,6 +15,7 @@ const flash = require('connect-flash');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
+const helmet = require('helmet');
 
 const userRoutes = require('./routes/users')
 const campgroundRoutes = require('./routes/campgrounds'); //uses the routes defined in routes/campgrounds.js
@@ -46,15 +47,68 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true })) //parse the request body
 app.use(methodOverride('_method'));//use method override
 app.use(express.static(path.join(__dirname, 'public'))); //serve the public directory
-app.use(mongoSanitize);
+app.use(mongoSanitize());
+
+//Must set the following to use helmet. If it doesn't seem to work, try logging in as a user. Seems to reset and fix everything.
+const scriptSrcUrls = [
+    "https://stackpath.bootstrapcdn.com/",
+    "https://api.tiles.mapbox.com/",
+    "https://api.mapbox.com/",
+    "https://kit.fontawesome.com/",
+    "https://cdnjs.cloudflare.com/",
+    "https://cdn.jsdelivr.net/",
+    "https://res.cloudinary.com/dv5vm4sqh/"
+];
+const styleSrcUrls = [
+    "https://kit-free.fontawesome.com/",
+    "https://stackpath.bootstrapcdn.com/",
+    "https://api.mapbox.com/",
+    "https://api.tiles.mapbox.com/",
+    "https://fonts.googleapis.com/",
+    "https://use.fontawesome.com/",
+    "https://cdn.jsdelivr.net/",
+    "https://res.cloudinary.com/dv5vm4sqh/"
+];
+const connectSrcUrls = [
+    "https://*.tiles.mapbox.com",
+    "https://api.mapbox.com",
+    "https://events.mapbox.com",
+    "https://res.cloudinary.com/dv5vm4sqh/"
+];
+const fontSrcUrls = [ "https://res.cloudinary.com/dv5vm4sqh/" ];
+ 
+app.use(
+    helmet.contentSecurityPolicy({
+        directives : {
+            defaultSrc : [],
+            connectSrc : [ "'self'", ...connectSrcUrls ],
+            scriptSrc  : [ "'unsafe-inline'", "'self'", ...scriptSrcUrls ],
+            styleSrc   : [ "'self'", "'unsafe-inline'", ...styleSrcUrls ],
+            workerSrc  : [ "'self'", "blob:" ],
+            objectSrc  : [],
+            imgSrc     : [
+                "'self'",
+                "blob:",
+                "data:",
+                "https://res.cloudinary.com/" + process.env.CLOUDINARY_CLOUD_NAME + "/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT!
+                "https://images.unsplash.com/"
+            ],
+            fontSrc    : [ "'self'", ...fontSrcUrls ],
+            mediaSrc   : [ "https://res.cloudinary.com/dv5vm4sqh/" ],
+            childSrc   : [ "blob:" ]
+        }
+    })
+);
 
 //set session config and use. Test by starting up server, open browser > dev tools > application tab > cookies > click on server running. Send some requests (click on page links) to see cookies show up
 const sessionConfig = {
+    name: 'newCookieName', //changes default name to keep it more secure
     secret: 'secret', //a 'secret' to sign cookies
     resave: false, //removes deprication warning
     saveUninitialized: true, //removes deprication warning
     cookie: {
         httpOnly: true, //security not to reveal cookies to third party
+        //secure: true, //only over https in deployment
         expires: Date.now() + (1000 * 60 * 60 * 24 * 7), //expire in miliseconds * in minute * in hour * in day * in week = one week. Good to set. There is no default, and you don't want someone to stay logged in forever.
         maxAge: 1000 * 60 * 60 * 24 * 7
     }
