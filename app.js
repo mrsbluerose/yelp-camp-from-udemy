@@ -19,7 +19,9 @@ const User = require('./models/user');
 const userRoutes = require('./routes/users')
 const campgroundRoutes = require('./routes/campgrounds'); //uses the routes defined in routes/campgrounds.js
 const reviewRoutes = require('./routes/reviews');
-const { getMaxListeners } = require('process');
+//const { getMaxListeners } = require('process');
+
+const mongoSanitize = require('express-mongo-sanitize'); //security against SQL (or NoSQL) injection attacks
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
     //useNewUrlParser: true,  //depricated since course video
@@ -44,6 +46,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true })) //parse the request body
 app.use(methodOverride('_method'));//use method override
 app.use(express.static(path.join(__dirname, 'public'))); //serve the public directory
+app.use(mongoSanitize);
 
 //set session config and use. Test by starting up server, open browser > dev tools > application tab > cookies > click on server running. Send some requests (click on page links) to see cookies show up
 const sessionConfig = {
