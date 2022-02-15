@@ -182,5 +182,5 @@ app.use((err, req, res, next) => {
 //listening on port
 const port = process.env.PORT || 3000; //horuku's port or local port
 app.listen(port, () => { 
-    console.log('Serving on port 3000');
+    console.log(`Serving on port ${port}`);
 }) 
