@@ -25,7 +25,7 @@ const reviewRoutes = require('./routes/reviews');
 const MongoStore = require('connect-mongo');
 
 const mongoSanitize = require('express-mongo-sanitize'); //security against SQL (or NoSQL) injection attacks
-const dbUrl = 'mongodb://localhost:27017/yelp-camp';//process.env.DB_URL; //Mongo Atlas credentials
+const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';//process.env.DB_URL; //Mongo Atlas credentials
 mongoose.connect(dbUrl, {//dbUrl, {
     //useNewUrlParser: true,  //depricated since course video
     //useCreateIndex: true,  //depricated since course video
@@ -50,7 +50,7 @@ app.use(express.urlencoded({ extended: true })) //parse the request body
 app.use(methodOverride('_method'));//use method override
 app.use(express.static(path.join(__dirname, 'public'))); //serve the public directory
 app.use(mongoSanitize());
-const secret = process.env.SECRET;
+const secret = process.env.SECRET || 'secret';
 
 const store = MongoStore.create({ //diff from instructor's code. updated for latest version of connect Mongo from comments and documentation
     mongoUrl: dbUrl,
