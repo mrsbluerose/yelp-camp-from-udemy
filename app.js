@@ -23,8 +23,8 @@ const reviewRoutes = require('./routes/reviews');
 //const { getMaxListeners } = require('process');
 
 const mongoSanitize = require('express-mongo-sanitize'); //security against SQL (or NoSQL) injection attacks
-
-mongoose.connect('mongodb://localhost:27017/yelp-camp', {
+const dbUrl = process.env.DB_URL;
+mongoose.connect('mongodb://localhost:27017/yelp-camp', {//dbUrl, {
     //useNewUrlParser: true,  //depricated since course video
     //useCreateIndex: true,  //depricated since course video
     //useUnifiedTopology: true  //depricated since course video
