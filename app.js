@@ -22,9 +22,11 @@ const campgroundRoutes = require('./routes/campgrounds'); //uses the routes defi
 const reviewRoutes = require('./routes/reviews');
 //const { getMaxListeners } = require('process');
 
+const MongoStore = require('connect-mongo');
+
 const mongoSanitize = require('express-mongo-sanitize'); //security against SQL (or NoSQL) injection attacks
-const dbUrl = process.env.DB_URL;
-mongoose.connect('mongodb://localhost:27017/yelp-camp', {//dbUrl, {
+const dbUrl = 'mongodb://localhost:27017/yelp-camp';//process.env.DB_URL; //Mongo Atlas credentials
+mongoose.connect(dbUrl, {//dbUrl, {
     //useNewUrlParser: true,  //depricated since course video
     //useCreateIndex: true,  //depricated since course video
     //useUnifiedTopology: true  //depricated since course video
@@ -48,6 +50,35 @@ app.use(express.urlencoded({ extended: true })) //parse the request body
 app.use(methodOverride('_method'));//use method override
 app.use(express.static(path.join(__dirname, 'public'))); //serve the public directory
 app.use(mongoSanitize());
+const secret = process.env.SECRET;
+
+const store = MongoStore.create({ //diff from instructor's code. updated for latest version of connect Mongo from comments and documentation
+    mongoUrl: dbUrl,
+    secret,
+    touchAfter: 24 * 60 * 60 //specify laxy session update https://github.com/jdesboeufs/connect-mongo#lazy-session-update
+})
+
+store.on("error", function(e) {
+    console.log("SESSION STORE ERROR", e)
+})
+
+//set session config and use. Test by starting up server, open browser > dev tools > application tab > cookies > click on server running. Send some requests (click on page links) to see cookies show up
+const sessionConfig = {
+    store,
+    name: 'session', //changes default name to keep it more secure
+    secret, //a 'secret' to sign cookies
+    resave: false, //removes deprication warning
+    saveUninitialized: true, //removes deprication warning
+    cookie: {
+        httpOnly: true, //security not to reveal cookies to third party
+        //secure: true, //only over https in deployment
+        expires: Date.now() + (1000 * 60 * 60 * 24 * 7), //expire in miliseconds * in minute * in hour * in day * in week = one week. Good to set. There is no default, and you don't want someone to stay logged in forever.
+        maxAge: 1000 * 60 * 60 * 24 * 7
+    }
+};
+
+app.use(session(sessionConfig));
+app.use(flash());
 
 //Must set the following to use helmet. If it doesn't seem to work, try logging in as a user. Seems to reset and fix everything.
 const scriptSrcUrls = [
@@ -99,22 +130,6 @@ app.use(
         }
     })
 );
-
-//set session config and use. Test by starting up server, open browser > dev tools > application tab > cookies > click on server running. Send some requests (click on page links) to see cookies show up
-const sessionConfig = {
-    name: 'newCookieName', //changes default name to keep it more secure
-    secret: 'secret', //a 'secret' to sign cookies
-    resave: false, //removes deprication warning
-    saveUninitialized: true, //removes deprication warning
-    cookie: {
-        httpOnly: true, //security not to reveal cookies to third party
-        //secure: true, //only over https in deployment
-        expires: Date.now() + (1000 * 60 * 60 * 24 * 7), //expire in miliseconds * in minute * in hour * in day * in week = one week. Good to set. There is no default, and you don't want someone to stay logged in forever.
-        maxAge: 1000 * 60 * 60 * 24 * 7
-    }
-};
-app.use(session(sessionConfig));
-app.use(flash());
 
 //passport
 app.use(passport.initialize());
